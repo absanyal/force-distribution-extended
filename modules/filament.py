@@ -6,7 +6,7 @@ from numpy import sqrt, pi, cos, sin, arcsin, arccos
 
 
 class filament:
-    def __init__(self, num_monomers, monomer_diameter, start_pos, heading, linker_distance, linker_list, linker_diameter, radius_of_curvature):
+    def __init__(self, num_monomers, monomer_diameter, start_pos, heading, linker_distance, linker_extension, linker_list, linker_diameter, radius_of_curvature):
         self.__num_monomers = num_monomers
         self.__monomer_diameter = monomer_diameter
 
@@ -24,10 +24,13 @@ class filament:
 
         self.__linker_list = linker_list
         self.__linker_distance = linker_distance
+        self.__linker_extension = linker_extension
         self.__linker_diameter = linker_diameter
         self.__num_linkers = sum(linker_list)
         self.__linkers = []
+        self.__linkers_2 = []
         self.linker_positions = []
+        self.linker_positions_2 = []
 
         try:
             assert len(self.__linker_list) == self.__num_monomers
@@ -80,6 +83,8 @@ class filament:
 
         R = self._radius_of_curvature
         d = self.__linker_distance
+        
+        d_e = self.__linker_extension
 
         a1 = a + ((a**2)) / np.sqrt(4 * R**2 - a**2)
         a2 = a - ((a**2)) / np.sqrt(4 * R**2 - a**2)
@@ -111,6 +116,8 @@ class filament:
 
                 linker_heading = g
                 linker_starting_pos = p2 + d * g + abs(s1) * (h+f)
+                
+                linker_extension_starting_pos = linker_starting_pos + g * d_e
 
                 linker_starting_index = (
                     len(self.__layers) * 4) + (sum(self.__linker_list[:monomer_index]) * 4) + 1
@@ -118,11 +125,20 @@ class filament:
                 linker = layer(self.__linker_diameter, linker_starting_pos,
                                linker_heading, linker_starting_index)
                 self.__linkers.append(linker)
+                
+                linker_extension_starting_index = linker_starting_index + (self.__num_linkers * 4)
+                
+                linker_extension = layer(self.__linker_diameter, linker_extension_starting_pos, linker_heading, linker_extension_starting_index)
+                
+                self.__linkers_2.append(linker_extension)
 
         # Save positions for each point on linker
         for linker_i in range(len(self.__linkers)):
             linker = self.__linkers[linker_i]
             self.linker_positions.append(linker.positions)
+            
+            linker_extension = self.__linkers_2[linker_i]
+            self.linker_positions_2.append(linker_extension.positions)
 
         # Create bonds and angles
 
@@ -226,6 +242,14 @@ class filament:
                 l2 = int(linker_indices[1])
                 l3 = int(linker_indices[2])
                 l4 = int(linker_indices[3])
+                
+                linker_extension = self.__linkers_2[linker_index]
+                linker_extension_indices = linker_extension.indices
+                
+                le1 = int(linker_extension_indices[0])
+                le2 = int(linker_extension_indices[1])
+                le3 = int(linker_extension_indices[2])
+                le4 = int(linker_extension_indices[3])
 
                 linker_index += 1  # since has_linker is True
 
@@ -296,6 +320,7 @@ class filament:
         a = (self.__monomer_diameter)
         R = self._radius_of_curvature
         d = self.__linker_distance
+        d_e = self.__linker_extension
 
         a1 = a + ((a**2)) / np.sqrt(4 * R**2 - a**2)
         a2 = a - ((a**2)) / np.sqrt(4 * R**2 - a**2)
@@ -319,7 +344,7 @@ class filament:
         phi3 = arccos((a - aL) / (2 * gamma))
         phi4 = pi - phi3
 
-        return R, d, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4
+        return R, d, d_e, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4
 
     #############################################################################
     # Properties of the filament
@@ -368,6 +393,10 @@ class filament:
     @property
     def linkers(self):
         return self.__linkers
+    
+    @property
+    def linkers_2(self):
+        return self.__linkers_2
 
     @property
     def linker_diameter(self):
