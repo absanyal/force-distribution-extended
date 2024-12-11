@@ -417,6 +417,10 @@ class filament:
     @property
     def num_linkers(self):
         return self.__num_linkers
+    
+    @property
+    def num_linkers_2(self):
+        return len(self.__linkers_2)
 
     @property
     def linkers(self):
@@ -450,7 +454,8 @@ class filament:
     def total_particles(self):
         layers_particles = 4 * len(self.__layers)
         linkers_particles = 4 * len(self.__linkers)
-        return layers_particles + linkers_particles
+        linkers_2_particles = 4 * len(self.__linkers_2)
+        return layers_particles + linkers_particles + linkers_2_particles
 
     @property
     def heading(self):
