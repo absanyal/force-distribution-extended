@@ -116,7 +116,7 @@ class filament:
                 
                 # First layer of linkers
 
-                linker_heading = g
+                linker_heading = -g
                 linker_starting_pos = p2 + d * g + abs(s1) * (h+f)
                 
                 linker_extension_starting_pos = linker_starting_pos + g * d_e
