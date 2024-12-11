@@ -5,7 +5,7 @@ from modules.filament import filament
 
 def write_polymer_data(filament_name: filament, box_dimensions: list, mass: list, bond_styles:list, angle_styles:list, data_fname_str: str):
     
-    R, d, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = filament_name.get_parameters()
+    R, d, d_e, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = filament_name.get_parameters()
 
     num_monomers = filament_name.num_monomers
     num_layers = filament_name.num_layers
@@ -74,31 +74,12 @@ def write_polymer_data(filament_name: filament, box_dimensions: list, mass: list
                 px, py, pz = linker.positions[atom_i]
                 data_f.write("{:d} {:d} {:d} {:.4f} {:.4f} {:.4f}\n".format(atom_index, molecule_index, atom_type, px, py, pz))
         
-        # for monomer in filament_name.monomer_layer_units:
-        #     monomer_index, layer1_i, layer2_i, has_linker = monomer
-        #     l1, l2 = filament_name.layers[layer1_i], filament_name.layers[layer2_i]
-            
-        #     atom_type = 1
-            
-        #     for atom_i in range(len(l1.positions)):
-        #         atom_index = l1.indices[atom_i]
-        #         px, py, pz = l1.positions[atom_i]
-        #         data_f.write("{:d} {:d} {:d} {:.4f} {:.4f} {:.4f}\n".format(atom_index, molecule_index, atom_type, px, py, pz))
-            
-        #     if layer2_i == num_monomers:
-        #         atom_type = 1
-        #         for atom_i in range(len(l2.positions)):
-        #             atom_index = l2.indices[atom_i]
-        #             px, py, pz = l2.positions[atom_i]
-        #             data_f.write("{:d} {:d} {:d} {:.4f} {:.4f} {:.4f}\n".format(atom_index, molecule_index, atom_type, px, py, pz))
-            
-        #     if has_linker:
-        #         atom_type = 2
-        #         linker = filament_name.linkers[monomer_index]
-        #         for atom_i in range(len(linker.positions)):
-        #             atom_index = linker.indices[atom_i]
-        #             px, py, pz = linker.positions[atom_i]
-        #             data_f.write("{:d} {:d} {:d} {:.4f} {:.4f} {:.4f}\n".format(atom_index, molecule_index, atom_type, px, py, pz))
+        atom_type = 3 # Linkers2 vertex
+        for linker_i, linker in enumerate(filament_name.linkers_2):
+            for atom_i in range(len(linker.positions)):
+                atom_index = linker.indices[atom_i]
+                px, py, pz = linker.positions[atom_i]
+                data_f.write("{:d} {:d} {:d} {:.4f} {:.4f} {:.4f}\n".format(atom_index, molecule_index, atom_type, px, py, pz))
         
         data_f.write("\n")
         
