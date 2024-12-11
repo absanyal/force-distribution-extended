@@ -4,7 +4,7 @@ from modules.filament import filament
 
 def write_lammps_input(filament_name: filament, box_dimensions: list, mass: list, bond_styles:list, angle_styles:list, pair_coeff:list, pair_cutoffs:list, groups:list, sim_parameters:list, folders:list, brownian_parameters:list, input_fname_str: str, filament_datafile:str, dump_minimization: bool, fix_nve_min: list, fix_wall: list):
     
-    R, d, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = filament_name.get_parameters()
+    R, d, d_e, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = filament_name.get_parameters()
 
     num_monomers = filament_name.num_monomers
     num_layers = filament_name.num_layers
