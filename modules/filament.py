@@ -113,6 +113,8 @@ class filament:
             monomer_index, layer_i, next_layer_i, has_linker = unit
             if has_linker:
                 p2 = self.__layers[layer_i].positions[1]
+                
+                # First layer of linkers
 
                 linker_heading = g
                 linker_starting_pos = p2 + d * g + abs(s1) * (h+f)
