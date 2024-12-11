@@ -259,6 +259,20 @@ class filament:
                 self.__bonds.append([bond_type, l2, l3])
                 self.__bonds.append([bond_type, l3, l4])
                 self.__bonds.append([bond_type, l4, l1])
+                
+                self.bonds.append([bond_type, le1, le2])
+                self.bonds.append([bond_type, le2, le3])
+                self.bonds.append([bond_type, le3, le4])
+                self.bonds.append([bond_type, le4, le1])
+                
+                # Bonds connecting linkers to linkers2
+                bond_type = 7
+                
+                self.bonds.append([bond_type, l1, le1])
+                self.bonds.append([bond_type, l2, le2])
+                self.bonds.append([bond_type, l3, le3])
+                self.bonds.append([bond_type, l4, le4])
+                
 
                 # linker-monomer bonds
                 bond_type = 5
@@ -275,6 +289,20 @@ class filament:
                 self.__angles.append([angle_type, l2, l3, l4])
                 self.__angles.append([angle_type, l3, l4, l1])
                 self.__angles.append([angle_type, l4, l1, l2])
+                
+                self.__angles.append([angle_type, le1, le2, le3])
+                self.__angles.append([angle_type, le2, le3, le4])
+                self.__angles.append([angle_type, le3, le4, le1])
+                self.__angles.append([angle_type, le4, le1, le2])
+                
+                self.__angles.append([angle_type, l1, le1, le2])
+                self.__angles.append([angle_type, l1, le1, le4])
+                self.__angles.append([angle_type, l2, le2, le3])
+                self.__angles.append([angle_type, l2, le2, le1])
+                self.__angles.append([angle_type, l3, le3, le4])
+                self.__angles.append([angle_type, l3, le3, le2])
+                self.__angles.append([angle_type, l4, le4, le1])
+                self.__angles.append([angle_type, l4, le4, le3])
 
                 # _____________________________________________
 
