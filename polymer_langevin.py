@@ -3,7 +3,7 @@ from modules.angle import filter_angle
 from modules.filament import filament
 from modules.save_info import save_filament_info, save_box_info, save_linker_distribution
 from modules.polymer_data_writer import write_polymer_data
-from modules.lammps_input_writer import write_lammps_input
+from modules.lammps_input_writer_langevin import write_lammps_input_langevin
 
 ###################################################################################
 ######################### DATA FILE PARAMETERS ####################################
@@ -48,7 +48,7 @@ linker_diameter = 2
 radius_of_curvature = 100
 
 # Distance of the filament head from the long axis of the cylinder
-distance_from_axis = 315
+distance_from_axis = 310
 # distance_from_axis = 0
 
 # Angle of the filament with the wall
@@ -109,7 +109,7 @@ bond_styles = [
     [4, "harmonic", 15000.0, 2 * l],
     [5, "harmonic", 15000.0, gamma],
     [6, "harmonic", 15000.0, aL],
-    [7, "harmonic", 31.0, d_e]
+    [7, "harmonic", 38.75, d_e]
 ]
 
 # Angle styles: Angle type, Angle style, k, theta0
@@ -135,7 +135,7 @@ pair_coeff = [
 
 # Pair cutoffs for hybrid style
 pair_cutoffs = [
-    ["zero", 30.0],
+    ["zero", 50.0],
     ["lj/cut", 8.0]
 ]
 
@@ -151,10 +151,10 @@ groups = [
 ###################################################################################
 
 # Iteration numbers
-steps_min = 200000
-steps_run = 6000000
+steps_min = 5000000
+steps_run = 20000000
 
-thermo_min = 100
+thermo_min = 10000
 thermo_run = 10000
 
 record_interval = 1000
@@ -201,7 +201,7 @@ fix_nve_min = ["fix_min", 0.000001]
 fix_wall = [
     ["wallchain", "chain", [5.0, 2.1, 2.1 * 2.0**(1/6)]],
     ["walllinker", "linker", [5.0, 2.1, 2.1 * 2.0**(1/6)]],
-    ["walllinker2", "linker2", [800.0, 2.1, 30.0]]
+    ["walllinker2", "linker2", [800.0, 2.1, 50.0]]
 ]
 
 # ----------------------------------------------------------------------------------
@@ -228,5 +228,5 @@ write_polymer_data(f1, box_dimensions, mass, bond_styles,
 ###################################################################################
 
 # ---LAMMPS input file---
-write_lammps_input(filament_name=f1, box_dimensions=box_dimensions, mass=mass, bond_styles=bond_styles, angle_styles=angle_styles, pair_coeff=pair_coeff, pair_cutoffs=pair_cutoffs, groups=groups, sim_parameters=sim_parameters,
+write_lammps_input_langevin(filament_name=f1, box_dimensions=box_dimensions, mass=mass, bond_styles=bond_styles, angle_styles=angle_styles, pair_coeff=pair_coeff, pair_cutoffs=pair_cutoffs, groups=groups, sim_parameters=sim_parameters,
                    folders=folders, brownian_parameters=brownian_parameters, input_fname_str=input_fname_str, dump_minimization=dump_minimization, filament_datafile=data_fname_str, fix_nve_min=fix_nve_min, fix_wall=fix_wall)
