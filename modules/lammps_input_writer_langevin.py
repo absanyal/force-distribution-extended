@@ -2,7 +2,7 @@ import numpy as np
 from modules.angle import filter_angle
 from modules.filament import filament
 
-def write_lammps_input(filament_name: filament, box_dimensions: list, mass: list, bond_styles:list, angle_styles:list, pair_coeff:list, pair_cutoffs:list, groups:list, sim_parameters:list, folders:list, brownian_parameters:list, input_fname_str: str, filament_datafile:str, dump_minimization: bool, fix_nve_min: list, fix_wall: list):
+def write_lammps_input_langevin(filament_name: filament, box_dimensions: list, mass: list, bond_styles:list, angle_styles:list, pair_coeff:list, pair_cutoffs:list, groups:list, sim_parameters:list, folders:list, brownian_parameters:list, input_fname_str: str, filament_datafile:str, dump_minimization: bool, fix_nve_min: list, fix_wall: list):
     
     R, d, d_e, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = filament_name.get_parameters()
 
@@ -234,15 +234,33 @@ def write_lammps_input(filament_name: filament, box_dimensions: list, mass: list
             input_f.write("# Linker {}\n".format(linker_i+1))
             for atom_i in range(len(linker.positions)):
                 atom_index = linker.indices[atom_i]
+                
                 input_f.write("variable l{}a{}x equal x[{}]\n".format(linker_i+1, atom_i+1, atom_index))
                 input_f.write("variable l{}a{}y equal y[{}]\n".format(linker_i+1, atom_i+1, atom_index))
                 input_f.write("variable l{}a{}z equal z[{}]\n".format(linker_i+1, atom_i+1, atom_index))
                 input_f.write("\n")
                 
+                
             input_f.write("variable l{}x equal (v_l{}a1x+v_l{}a2x+v_l{}a3x+v_l{}a4x)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
             input_f.write("variable l{}y equal (v_l{}a1y+v_l{}a2y+v_l{}a3y+v_l{}a4y)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
             input_f.write("variable l{}z equal (v_l{}a1z+v_l{}a2z+v_l{}a3z+v_l{}a4z)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
             
+            input_f.write("\n")
+        
+        for linker_i, linker in enumerate(filament_name.linkers_2):
+            input_f.write("# Linker_e {}\n".format(linker_i+1))
+            
+            for atom_i in range(len(linker.positions)):
+                atom_index = linker.indices[atom_i]
+                
+                input_f.write("variable le{}a{}x equal x[{}]\n".format(linker_i+1, atom_i+1, atom_index))
+                input_f.write("variable le{}a{}y equal y[{}]\n".format(linker_i+1, atom_i+1, atom_index))
+                input_f.write("variable le{}a{}z equal z[{}]\n".format(linker_i+1, atom_i+1, atom_index))
+                input_f.write("\n")
+            
+            input_f.write("variable le{}x equal (v_le{}a1x+v_le{}a2x+v_le{}a3x+v_le{}a4x)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
+            input_f.write("variable le{}y equal (v_le{}a1y+v_le{}a2y+v_le{}a3y+v_le{}a4y)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
+            input_f.write("variable le{}z equal (v_le{}a1z+v_le{}a2z+v_le{}a3z+v_le{}a4z)/4\n".format(linker_i+1, linker_i+1, linker_i+1, linker_i+1, linker_i+1))
             input_f.write("\n")
         
         
@@ -254,6 +272,13 @@ def write_lammps_input(filament_name: filament, box_dimensions: list, mass: list
             input_f.write("${{l{}x}} ${{l{}y}} ${{l{}z}} ".format(linker_i+1, linker_i+1, linker_i+1))
         
         input_f.write("\" file link_pos/link_pos.${xx}.txt screen no\n")
+        
+        input_f.write("\n")
+        
+        input_f.write("fix printlinkerex all print ${record_interval} \"${tsteps} ")
+        for linker_i, linker in enumerate(filament_name.linkers_2):
+            input_f.write("${{le{}x}} ${{le{}y}} ${{le{}z}} ".format(linker_i+1, linker_i+1, linker_i+1))
+        input_f.write("\" file link_pos/linkex_pos.${xx}.txt screen no\n")
         
         input_f.write("\n")
         
