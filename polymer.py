@@ -43,12 +43,13 @@ box_dimensions = [xlo, xhi, ylo, yhi, zlo, zhi]
 num_monomers = 20
 monomer_diameter = 5
 linker_distance = 2.5
+linker_extension = 10.0
 linker_diameter = 2
 radius_of_curvature = 100
 
 # Distance of the filament head from the long axis of the cylinder
-# distance_from_axis = 330
-distance_from_axis = 0
+distance_from_axis = 315
+# distance_from_axis = 0
 
 # Angle of the filament with the wall
 angle = 90
@@ -80,10 +81,10 @@ for i in range(num_monomers):
 
 # Create the filament
 f1 = filament(num_monomers, monomer_diameter, start_pos, heading,
-              linker_distance, linker_list, linker_diameter, radius_of_curvature)
+              linker_distance, linker_extension, linker_list, linker_diameter, radius_of_curvature)
 
 # Get the parameters of the filament for making bonds and angles
-R, d, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = f1.get_parameters()
+R, d, d_e, a, a1, a2, l, s1, s2, aF, aL, theta1, theta2, gamma, phi1, phi2, phi3, phi4 = f1.get_parameters()
 
 theta1 = np.degrees(theta1)
 theta2 = np.degrees(theta2)
@@ -96,7 +97,8 @@ pi_by_2 = 90
 # Particle types
 mass = [
     [1, 1.0, "monomer_vertex"],
-    [2, 0.25, "linker_vertex"]
+    [2, 0.25, "linker_vertex"],
+    [3, 0.25, "linker2_vertex"]
 ]
 
 # Bond styles: Bond type, Bond style, k, r0
@@ -106,7 +108,8 @@ bond_styles = [
     [3, "harmonic", 15000.0, a1],
     [4, "harmonic", 15000.0, 2 * l],
     [5, "harmonic", 15000.0, gamma],
-    [6, "harmonic", 15000.0, aL]
+    [6, "harmonic", 15000.0, aL],
+    [7, "harmonic", 31.0, d_e]
 ]
 
 # Angle styles: Angle type, Angle style, k, theta0
@@ -124,7 +127,10 @@ angle_styles = [
 pair_coeff = [
     [1, 1, "zero", []],
     [2, 2, "zero", []],
-    [1, 2, "lj/cut", [5.0, 2.5, 2.5 * 2.0**(1/6)]]
+    [3, 3, "zero", []],
+    [2, 3, "zero", []],
+    [1, 2, "lj/cut", [5.0, 2.5, 2.5 * 2.0**(1/6)]],
+    [1, 3, "lj/cut", [5.0, 2.5, 2.5 * 2.0**(1/6)]]
 ]
 
 # Pair cutoffs for hybrid style
@@ -136,7 +142,8 @@ pair_cutoffs = [
 # Atom groups
 groups = [
     [1, "chain"],
-    [2, "linker"]
+    [2, "linker"],
+    [3, "linker2"]
 ]
 
 ###################################################################################
@@ -144,8 +151,8 @@ groups = [
 ###################################################################################
 
 # Iteration numbers
-steps_min = 2000
-steps_run = 100000
+steps_min = 200000
+steps_run = 6000000
 
 thermo_min = 100
 thermo_run = 10000
@@ -155,7 +162,7 @@ record_interval = 1000
 dump_interval_min = 100
 dump_interval_run = 1000
 
-temperture = 0.01
+temperature = 0.01
 time_step = 0.00001
 
 # Minimization parameters: [energy_tolerance, force_tolerance, max_iterations, max_evaluations]
@@ -167,7 +174,7 @@ minimization_parameters = [energy_tolerance,
                            force_tolerance, max_iterations, max_evaluations]
 
 sim_parameters = [steps_min, steps_run, thermo_min, thermo_run,
-                  record_interval, dump_interval_min, dump_interval_run, temperture, time_step, minimization_parameters]
+                  record_interval, dump_interval_min, dump_interval_run, temperature, time_step, minimization_parameters]
 
 folders = ['data', 'dump', 'link_pos', 'com_pos', 'mon_pos']
 
@@ -179,7 +186,7 @@ if auto_generate_seed:
 else:
     seed = fixed_seed
 
-gamma_t = 1.0
+gamma_t = 10.0
 
 brownian_parameters = [seed, gamma_t]
 
@@ -193,7 +200,8 @@ fix_nve_min = ["fix_min", 0.000001]
 # Fix 2: wall-atom LJ interactions
 fix_wall = [
     ["wallchain", "chain", [5.0, 2.1, 2.1 * 2.0**(1/6)]],
-    ["walllinker", "linker", [800.0, 2.1, 2.1 * 2.0**(1/6)]]
+    ["walllinker", "linker", [5.0, 2.1, 2.1 * 2.0**(1/6)]],
+    ["walllinker2", "linker2", [800.0, 2.1, 30.0]]
 ]
 
 # ----------------------------------------------------------------------------------
