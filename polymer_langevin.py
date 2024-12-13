@@ -71,13 +71,6 @@ for i in range(num_monomers):
         linker_list.append(1)
     else:
         linker_list.append(0)
-        
-# linker_list = np.zeros(num_monomers)
-# gap = 6
-# shift = 3
-# midpoint = num_monomers // 2
-# linker_list[midpoint - shift] = 1
-# linker_list[midpoint - shift + gap] = 1
 
 # Create the filament
 f1 = filament(num_monomers, monomer_diameter, start_pos, heading,
@@ -151,8 +144,8 @@ groups = [
 ###################################################################################
 
 # Iteration numbers
-steps_min = 5000000
-steps_run = 20000000
+steps_min = 10000
+steps_run = 1000000
 
 thermo_min = 10000
 thermo_run = 10000
@@ -162,7 +155,7 @@ record_interval = 1000
 dump_interval_min = 100
 dump_interval_run = 1000
 
-temperature = 0.01
+temperature = [0.0, 0.0]
 time_step = 0.00001
 
 # Minimization parameters: [energy_tolerance, force_tolerance, max_iterations, max_evaluations]
@@ -180,22 +173,26 @@ folders = ['data', 'dump', 'link_pos', 'com_pos', 'mon_pos']
 
 # ----------------------------------------------------------------------------------
 
-# Brownian parameters
+# langevin parameters
 if auto_generate_seed:
     seed = np.random.randint(1, 1000000)
 else:
     seed = fixed_seed
 
-gamma_t = 10.0
+damp = 1.0
 
-brownian_parameters = [seed, gamma_t]
+langevin_parameters = [seed, damp]
 
 # ----------------------------------------------------------------------------------
 # Fixes
-# Do not include Brownian fix for all atoms, it is automatically generated
+# Do not include langevin fix for all atoms, it is automatically generated
 
 # Fix 1: nve/limit integration for the minimization
-fix_nve_min = ["fix_min", 0.000001]
+fix_nve_min = ["fix_min", 0.00001]
+
+# Fix 2: nve/limit integration for the simulation
+fix_nve_run = ["fix_run", 0.1]
+# fix_nve_run = []
 
 # Fix 2: wall-atom LJ interactions
 fix_wall = [
@@ -229,4 +226,4 @@ write_polymer_data(f1, box_dimensions, mass, bond_styles,
 
 # ---LAMMPS input file---
 write_lammps_input_langevin(filament_name=f1, box_dimensions=box_dimensions, mass=mass, bond_styles=bond_styles, angle_styles=angle_styles, pair_coeff=pair_coeff, pair_cutoffs=pair_cutoffs, groups=groups, sim_parameters=sim_parameters,
-                   folders=folders, brownian_parameters=brownian_parameters, input_fname_str=input_fname_str, dump_minimization=dump_minimization, filament_datafile=data_fname_str, fix_nve_min=fix_nve_min, fix_wall=fix_wall)
+                            folders=folders, langevin_parameters=langevin_parameters, input_fname_str=input_fname_str, dump_minimization=dump_minimization, filament_datafile=data_fname_str, fix_nve_min=fix_nve_min, fix_nve_run=fix_nve_run, fix_wall=fix_wall)
