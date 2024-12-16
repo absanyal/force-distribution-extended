@@ -305,6 +305,15 @@ class filament:
                 self.__angles.append([angle_type, l3, le3, le2])
                 self.__angles.append([angle_type, l4, le4, le1])
                 self.__angles.append([angle_type, l4, le4, le3])
+                
+                self.__angles.append([angle_type, le1, l1, l2])
+                self.__angles.append([angle_type, le1, l1, l4])
+                self.__angles.append([angle_type, le2, l2, l3])
+                self.__angles.append([angle_type, le2, l2, l1])
+                self.__angles.append([angle_type, le3, l3, l4])
+                self.__angles.append([angle_type, le3, l3, l2])
+                self.__angles.append([angle_type, le4, l4, l1])
+                self.__angles.append([angle_type, le4, l4, l3])
 
                 # _____________________________________________
 
