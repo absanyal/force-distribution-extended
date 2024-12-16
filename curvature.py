@@ -25,6 +25,8 @@ sample_window_fraction = 0.02
 # In units of (microns)^2 / sec
 D_expected = 5
 
+R_cell = 350
+
 ################################# READ DATA ###############################################
 
 # Read filament info
@@ -123,9 +125,14 @@ for m_i in range(0, num_monomers - 2):
 
 s_list = np.arange(0, num_monomers - 2) * l
 
-plt.plot(s_list, r_curvature, label='Data', marker='o', color='black')
+plt.plot(s_list, r_curvature, label='Simulation', color='black', marker='o', linestyle='None')
 
 plt.xlabel(r'$s\,\mathrm{(nm)}$')
-plt.ylabel(r'$r\,\mathrm{(nm)}$')
+plt.ylabel(r'$R(s)\,\mathrm{(nm)}$')
+
+plt.axhline(R, color='red', label=r'$R_0$', linestyle='--')
+plt.axhline(R_cell, color='blue', label=r'$R_{\mathrm{cell}}$', linestyle='--')
+
+plt.legend()
 
 plt.savefig('plots/curvature.{}.pdf'.format(run_i))
